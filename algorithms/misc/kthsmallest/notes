@@ -1,0 +1,5 @@
+using selection sorting; that is to pick a pivot element and move all the elements less than the pivot element
+  value to the left side and the bigger ones to its right. if the pivot element happens to be the kth , return;
+case 2:  the k is less than i + 1; continue the procecure with the first half.
+case 3: continue with the second half, adjust k to k - i - 1;    
+complexity: best case O(1); worst case O(n*n). average O(n)

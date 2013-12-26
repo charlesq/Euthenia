@@ -1,0 +1,7 @@
+*.so
+*.a
+*.swp
+*.out
+*.gch
+*.swo
+bin/

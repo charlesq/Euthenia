@@ -1,0 +1,10 @@
+The approach is to check first if the two nodes belong to two children trees.
+if return yes, the current node is the lowerest ancestor
+if belong to the same subtree, then assignn the child node as current node  iand continue
+ corner cases:
+   1. either of the two nodes are NULL, return NULL
+   2. one node is the current node, and the other is in one of the subtrees, return the current node
+ 
+complexity:
+    in average/worst case, O(N) 
+

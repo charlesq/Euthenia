@@ -1,0 +1,2 @@
+ /usr//lib/jvm/java-7-openjdk-i386/bin/java -Djava.library.path="." Hello
+
