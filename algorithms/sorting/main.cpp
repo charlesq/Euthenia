@@ -1,173 +1,327 @@
-#include <iostream>
-#include <utility>
-#include <memory>
 #include <stdint.h>
-#include <stddef.h>
+#include <iostream>
+#include <cstdlib>
+#include <ctime>
 #include <algorithm>
-#include <queue>
-typedef std::pair<int , int> value_type;
-
-class compare
+#include <iomanip>
+/* Entrance class for sorting algorith testing, kind of a facade pattern example
+   in this program, elements are ordered by their natural order 
+ */
+class sorting
 {
-public:
-    bool operator () (const value_type &a, const value_type &b) const
-    {
-        return a.first < b.first;    
-    };
-};
-
-std::pair<int, int> * generate_array(size_t s)
-{
-    value_type *a = new std::pair<int, int>[s];
-    while(s -- != 0)
-    {
-        a[s] = std::make_pair<int, int> (rand()%300, s);
-    } 
-    return a;
-};
-size_t partition(value_type *a, size_t size, const compare &c)
-{
-   size_t i = 0, j = 0; 
-   while(++j < size)
+   int *a;/* array to be sorted, allocated on the heap */
+   size_t sz;/* number of elements  */
+   /* utility function, randomize elements order */   
+   void fisher_yates_shuffle()
    {
-       if (c(a[0], a[j]))
-           continue;
-       std::swap<value_type>(a[++i], a[j]);
-   }
-   std::swap<value_type>(a[i], a[0]); 
-   return i;
-}
-void sift_down(value_type *a, size_t s, compare c, size_t i)
-{
-    size_t k = 2 * i + 1, j = k + 1;
-    if (k >= s)
-       return;
-    if (j >= s)
+       for (size_t i = 1; i < sz; i ++)
+       {
+          int j = rand() % (i + 1);
+          std::swap(a[i], a[j]); 
+       }
+   };
+   /* utility function, print elements in the array */
+   void print_array(void) const 
+   {
+       for (size_t i = 0; i < sz; ++i)
+           std::cout << std::setfill(' ') <<  std::setw(3) << a[i];
+        std::cout << std::endl;
+   };
+   /* adopt xUnit methodology and  provide two fixture procedures, before and after respectively */
+   void before(std::string tn)
+   {
+       std::cout << "***************" << tn << "************" << std::endl;
+       fisher_yates_shuffle();
+       std::cout << "prior to sorting: " << std::endl;
+       print_array();
+   };
+   void after(void) const
+   {
+      std::cout  << "post sorting: " << std::endl;
+      print_array();
+      if (is_sorted())
+          std::cout << "all elements are sorted in non-descending order";
+      else
+          std::cout << "failed to sort elements in non-descending order";
+      std::cout << std::endl;
+   };
+   void generate_elements(size_t size)
+   {
+      a = new int[size];
+      for (size_t i = 0; i < size; i ++)
+          a[i] = i;
+   };
+   /* verify whether array is sorted */
+   bool is_sorted(void) const
+   {
+       for (size_t i = 1; i < sz; ++i)
+           if (a[i] < a[i-1])
+               return false;
+       return true;
+   }; 
+    /* base sort class, all sorting algorithm classes will derive from it */
+    class base_sort
     {
-        if (c(a[i], a[k]))
+    protected:
+        int *a;/* array is allocated from sorting class, do not deallocate */
+        size_t sz;
+        base_sort(sorting *s):a(s->a), sz(s->sz) {};
+    public:
+       /* abstract functor method */
+        virtual void operator()(void) = 0;
+    };
+
+    /* algorithm classes are defined below */
+/********************** Quick Sort ********************************/
+    class quick_sort: public base_sort
+    {
+        size_t partition(size_t start, size_t end)
         {
-            std::swap(a[i], a[k]);
-            sift_down(a, s, c, k);
-        }
-        return;
-    }
-    k = c(a[j], a[k])? k: j; 
-    if (c(a[i], a[k]))
+            size_t i = start, j = i;
+            while(++j < end)
+            {
+                if (a[j] < a[start])
+                    std::swap(a[++i], a[j]); 
+            }
+            std::swap(a[i], a[start]);
+            return i;
+        };
+        /* sort elements in [start,end) */
+        void sort(size_t start, size_t end)
+        {
+           /* recursion terminating condition */
+           if (end <= start +1)
+               return; 
+           /* randomly pick a pivot element */
+           size_t p = rand() % (end - start) + start;
+           std::swap(a[start], a[p]);
+           /*divide into two sub arrays, sorting procedure occurs inside */
+           p = partition(start, end);
+           /* conquer each sub array ? */
+           sort(start, p);
+           sort(p+1, end);
+        };
+    public:
+        quick_sort(sorting *st):base_sort(st) {};
+        void operator () (void)
+        {
+           sort(0, sz); 
+        };
+    }; 
+/********************Heap Sort Algorithm **************************/
+    class heap_sort:public base_sort
     {
-        std::swap(a[i], a[k]);
-        sift_down(a, s, c, k);
-    }
-}
+        /* this is a recursive procedre */
+        void sift_down(size_t i, size_t len)
+        {
+            size_t l = i * 2 + 1, r = l + 1; 
+            /* terminating condition 1*/
+            if(l >= len)
+               return; 
+            /* terminting condition 2*/
+            if (r >= len)
+            {
+                if (a[i] < a[l])
+                    std::swap(a[i], a[l]);
+                return;
+            }
+            l = a[l] >= a[r]? l: r;
+            /* terminating condition 3 */
+            if (a[i] >= a[l])
+                return;
+            std::swap(a[l], a[i]);
+            sift_down(l, len);
+        };
+        void heapify(void)
+        {
+            for (size_t i = sz/2; i != -1; --i)
+            {
+                sift_down(i, sz); 
+            }
+        };
+    public:
+         heap_sort(sorting *st):base_sort(st) {};
+         void operator() (void)
+         {
+             heapify();
+             for (size_t i = sz -1; i != 0; i --)
+             {
+                 std::swap(a[0], a[i]);
+                 sift_down(0, i);
+             }
+         };
+    };
+/************************Merge Sort Algorithm ******************/
+    class merge_sort: public base_sort
+    {
+        int *b;
+        /* merge the two subarrays into one sorted aggregate array */
+        void merge(size_t start, size_t end)
+        {
+            size_t m = (start + end)/2, i = start, j = m;
+            int *p=b;
+            while (i < m && j < end)
+                *p ++ = a[i] <= a[j]? a[i++]: a[j++];
+            while(i < m)
+                *p ++ = a[i++];
+            while(j < end)
+                *p ++ = a[j++];
+            /* copy sorted elements from helper array back to original array */
+            while(start < end)
+                a[--end] = *--p; 
  
-void heapify(value_type *a, size_t s , compare c)
-{
-     for (size_t i = s/2; i != -1; i --)
-         sift_down(a, s, c, i);
-}
-void heap_sort(value_type *a, size_t s, compare c)
-{
-      heapify(a, s, c);// max heap 
-      for (size_t i = s -1; i != 0; i --)
-      {
-          std::swap(a[0], a[i]);
-          sift_down(a, i, c, 0);
-      }
-}
-void print_array(const value_type *a, size_t s)
-{
-    while (s-- != 0)
+        }; 
+        /*sort elements in [start, end) */
+        void sort(size_t start, size_t end)
+        {
+            /* terminating condition */
+            if (end <= start + 1)
+                return;
+            size_t m = (start + end)/2;
+            /* arithmatically divide into two sub arrays without sorting 
+               and continue to divide each recursively */
+            sort(start, m);
+            sort(m, end);
+            /* conquer procedure */
+            merge(start, end);
+        };
+    public:
+        merge_sort(sorting *st): base_sort(st) {};
+        void operator() (void)
+        {
+            b = new int [sz];
+            /*sort elements in [start, end) */
+            sort(0, sz);
+            delete [] b;
+        };
+    };
+/*********************Bubble Sorting Algorithm ****************************/
+    class bubble_sort: public base_sort
     {
-        std::cout << "(" << (*a++).first << ", "  << (*a).second << ") ";
-    } 
-}
-void quick_sort(value_type *a, size_t size, compare c)
-{
-    print_array(a, size);
-    std::cout << std::endl; 
-    if (size <= 1)
-        return;
-    size_t p = rand() % size;
-   std::swap(a[p], a[0]); 
-    p = partition(a, size, c);
-    quick_sort(a,  p , c);
-    quick_sort(a + p + 1, size - p - 1, c);  
-}
-typedef std::pair<value_type, size_t> value_index;
-class compare_h
-{
+    public:
+        bubble_sort(sorting *st): base_sort(st) {};
+        void operator() (void)
+        {
+            for(size_t l = sz -1; l != 0; --l)
+                for (size_t i = 0; i < l; ++i)
+                    if (a[i] > a[i+1])
+                        std::swap(a[i], a[i+1]);
+        };
+    };
+/********************** Radix Sort Algorithm *************************/
+    class radix_sort: public base_sort
+    {
+        int *b;
+        size_t  *acc; 
+        #define BASE_16 16
+        #define BASE_10 10 
+        int base;    
+    public:
+        radix_sort(sorting *st): base_sort(st) 
+        {
+            base = BASE_10;
+            acc = new size_t [base]; 
+            b = new int [sz];
+        };
+        void operator() (void)
+        {
+            int denom = 1;
+            bool halt = false;
+            size_t  zero = 0;
+            while(true)
+            {
+                halt = true;
+                std::fill(acc, acc + base, zero); 
+                /* apply counting sort on each radix */
+                /* counting */
+                for (size_t i = 0; i < sz; ++i)
+                {
+                    size_t j = a[i] / denom % base; 
+                    if (halt && j != 0)
+                        halt = false;
+                    ++acc[j];
+                }
+                /* if other than on zero bit, no bits recorded non-zero , break out*/
+                if (halt)
+                    break;
+                /* accumulating */
+                for (size_t i = 1; i < base; ++i)
+                    acc[i] += acc[i-1];
+                for (size_t i = sz - 1; i != -1; --i)
+                {
+                    b[--acc[a[i] / denom % base]] = a[i];
+                }
+                std::copy(b, b + sz, a);
+                denom *= base;
+            }
+            /* unreached area */
+        };
+        ~radix_sort()
+        {
+            delete [] b;
+            delete [] acc;
+        };
+    };
+/*****************************************************************************************/
 public:
-    bool operator () (value_index a, value_index b) const
-    {
-        return a.first.first > b.first.first;
-    };  
+   sorting(size_t len)
+   {
+      sz = len;
+      generate_elements(sz);
+   }; 
+/* test methods for respective implemented  sorting algorithms*/
+   void runQuicksort()
+   {
+      before("Quick sorting");
+      quick_sort qs(this);
+      qs();
+      after();
+   };
+   void runHeapsort()
+   {
+      before("Heap sorting");
+      heap_sort hs(this);
+      hs();
+      after();
+   }; 
+   void runBubblesort()
+   {
+      before("Bubble sorting" );
+      bubble_sort bs(this);
+      bs();
+      after();
+   };
+   void runRadixsort()
+   {
+      before("Radix sorting");
+      radix_sort rs(this);
+      rs();
+      after();
+   }; 
+   void runMergesort()
+   {
+     before("Merge sorting");
+     merge_sort ms(this);
+     ms();
+     after();
+   };
+   virtual ~sorting()
+   {
+      delete [] a; 
+   };
+private: 
+  /* make base_sortt a friend class, so it can access the elements information */
+  friend class base_sort;
 };
-#include <forward_list>
-#include <deque>
-void merge(value_type *a, size_t s, size_t m, size_t e, compare_h c)
-{
-    
-    std::forward_list<value_type> fl; 
-    std::priority_queue<value_index, std::deque<value_index>, compare_h> pq;
-    size_t mm = m + 1, start = s;;
-    if (s <= m)
-        pq.push(std::make_pair(a[s++], 0));
-    if (mm <= e)
-        pq.push(std::make_pair(a[mm++], 1));
-    value_index i;
-    while(!pq.empty())
-    {
-        i = pq.top();
-        pq.pop();
-        fl.push_front(i.first);
-        if (i.second == 0 && s <= m)
-            pq.push(std::make_pair(a[s++], 0));
-        else
-        {   
-            if (mm > e)
-                continue;
-            pq.push(std::make_pair(a[mm ++], 1));
-        }
-    }
-    while(!fl.empty())
-    {
-        a[e--] = fl.front();
-        fl.pop_front();
-    }
-}
-void merge_sort(value_type *a, size_t s, size_t e, compare_h c)
-{
-    if (s == e)
-       return;
-    size_t m = (s + e)/2;
-    merge_sort(a, s, m, c); 
-    merge_sort(a, m + 1, e, c);
-    merge(a,s, m, e, c); 
-} 
-void bubble_sort(value_type *a, size_t s, compare c)
-{
-    if ( s <= 1)
-       return;
-    for (size_t i = 0; i < s -1; i ++)
-    {
-        if (c(a[i +1], a[i]))
-            std::swap(a[i +1], a[i]);
-    }
-    bubble_sort(a, s-1, c);
-} 
+
+
 int main()
 {
-   size_t s = 20;
-//   print_array(ar, 3);
-   value_type *a = generate_array(s);
-//   std::cout << a[0].first << a[0].second << a[1].first << a[1].second << a[2].first << a[2].second;
-   print_array(a, s);
-   std::cout << std::endl;
-   //quick_sort(a, s,compare ());
-   //heap_sort(a, s, compare());
-  //  merge_sort(a, 0, s -1, compare_h());
-   bubble_sort(a, s, compare());
-   print_array(a, s);
-   std::cout << std::endl;
-   delete [] a; 
-   return 0;
-};
+    sorting instance(20);
+    instance.runQuicksort();
+    instance.runHeapsort();
+    instance.runBubblesort();
+    instance.runMergesort();
+    instance.runRadixsort();
+    return 0;
+}
