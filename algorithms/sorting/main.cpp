@@ -32,15 +32,15 @@ class sorting
    {
        std::cout << "***************" << tn << "************" << std::endl;
        fisher_yates_shuffle();
-       std::cout << "prior to sorting: " << std::endl;
+       std::cout << "Prior to sorting: " << std::endl;
        print_array();
    };
    void after(void) const
    {
-      std::cout  << "post sorting: " << std::endl;
+      std::cout  << "Post sorting: " << std::endl;
       print_array();
       if (is_sorted())
-          std::cout << "all elements are sorted in non-descending order";
+          std::cout << "All elements are sorted in non-descending order";
       else
           std::cout << "failed to sort elements in non-descending order";
       std::cout << std::endl;
@@ -262,6 +262,18 @@ class sorting
             delete [] acc;
         };
     };
+    class insert_sort: public base_sort
+    {
+    public:
+        insert_sort(sorting *st): base_sort(st) {};
+        void operator () (void)
+        {
+            for (size_t i = 1; i < sz; ++i)
+                for (size_t j = i; j != 0; --j)
+                    if (a[j] < a[j-1])
+                        std::swap(a[j], a[j-1]);
+        };
+    };
 /*****************************************************************************************/
 public:
    sorting(size_t len)
@@ -270,40 +282,47 @@ public:
       generate_elements(sz);
    }; 
 /* test methods for respective implemented  sorting algorithms*/
-   void runQuicksort()
+   void runQuicksort(void)
    {
       before("Quick sorting");
       quick_sort qs(this);
       qs();
       after();
    };
-   void runHeapsort()
+   void runHeapsort(void)
    {
       before("Heap sorting");
       heap_sort hs(this);
       hs();
       after();
    }; 
-   void runBubblesort()
+   void runBubblesort(void)
    {
       before("Bubble sorting" );
       bubble_sort bs(this);
       bs();
       after();
    };
-   void runRadixsort()
+   void runRadixsort(void)
    {
       before("Radix sorting");
       radix_sort rs(this);
       rs();
       after();
    }; 
-   void runMergesort()
+   void runMergesort(void)
    {
      before("Merge sorting");
      merge_sort ms(this);
      ms();
      after();
+   };
+   void runInsertsort(void)
+   {
+       before("Insert sorting");
+       insert_sort is(this);
+       is();
+       after();
    };
    virtual ~sorting()
    {
@@ -323,5 +342,6 @@ int main()
     instance.runBubblesort();
     instance.runMergesort();
     instance.runRadixsort();
+    instance.runInsertsort();
     return 0;
 }
