@@ -2,18 +2,22 @@
                              Big Numbers 
 1. Overview
 
-In scientic and security applications, the size of a number is usually larger 
-than those of of native data types on a computer. To overcome the limitation,
-additional aggregate data structures must be defiend to contain large numbers. 
+In scientic and security applications, the size of a number is frequently larger 
+than those of native data types on a computer. To overcome the limitation,
+additional aggregate data structures must be defiend to hold large numbers. 
 
-Specific in the domain of compter security, most common big large number library
+Specific in the domain of compter security, most common big large number libraries
 have to deal with dynamic allocation and deallocation of memory related to
 storing big number. Besides, they were written in C and provides C APIs.
 
-The exercise undertaken here aims to create a C++ big number math library for security applications, which normally does not consider signness of a number.
+The exercise undertaken here aims to create a C++ big number math library for 
+security applications, which normally does not consider signness of a number.
 Given that, all numbers are unsigned.
 
-In my view, development in C++ comes with several benefits; STL container objects may be employed to ease up memory management; and operator overloading and friend class/function relationships helps to make its usage like computing with native data types.
+In my view, development in C++ comes with several benefits; STL container objects
+may be employed to ease up memory management; and operator overloading and 
+friend class/function relationships helps to make its usage like computing with 
+native data types.
 
 2. List of implemented big number  operations
 
