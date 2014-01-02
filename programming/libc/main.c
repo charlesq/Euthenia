@@ -6,10 +6,18 @@
 #include <stdint.h>
 #include <string.h>
 #include <iomanip>
-/* Note:
+/* 
+    implemenation of 
+       toupper, tolower, strchr, strrchr, strlen, strcpy, strncpy,
+       memmove, memchr, memrchr, strcat, strncat, strtoul, strtok,
+       strtok_r.
+                  
+    Note:
     1.  must be compiled with g++ solely because of use of namesapce   
     2. with g++, const_cast must be applied to cast from non-const to const 
-    3. had to switch from scanf to std::cin due to scanf drawback of handling input buffer clearing
+    3. had to switch from scanf to std::cin due to scanf drawback of handling 
+       input buffer clearing
+    4. created a simple and primitive test framework to test implementations.
 */
 namespace exercise {
     char * strchr(const char *s, int c)
@@ -239,7 +247,7 @@ namespace exercise {
          if (str == NULL && (str = *saveptr) == NULL)
              return NULL; 
          const char *delim;
-         char *tok = str, *p = NULL; 
+         char *tok = str; 
          while(*str != '\0')
          {
               delim = delimeters;
@@ -247,34 +255,23 @@ namespace exercise {
               {
                   if (*delim == *str)
                       break;
-                  delim++;
+                  ++delim;
               } 
              if (*delim != '\0' )
              {
-                 if (p == NULL)
-                 {
-                     p = str;
-                     if (tok == p)
-                     {
-                         tok ++;
-                     }
-                     else
-                     {
-                         *str++ = '\0';
-                         break;
-                     }
-                 }
-                 else
-                 {
-                    *str++ = '\0'; 
-                    break;
-                 }
+                 if (tok != str)
+                     break;
+                 ++tok;
              }
              ++str;
          }
          if (*str == '\0')
-             str = NULL;
-         *saveptr = str;
+             *saveptr = NULL;
+         else
+         {
+             *str = '\0';
+             *saveptr = ++str;
+         }
          return tok;
     }
     char *strtok(char *str, const char *delim)
