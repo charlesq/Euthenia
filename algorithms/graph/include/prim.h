@@ -45,13 +45,10 @@ public:
         colors.resize(g->V(), c);
     };
     virtual void  do_work(size_t s);
-<<<<<<< HEAD
     virtual ~prim(void)
     {
         colors.clear();
     };
-=======
->>>>>>> 2feaa2afd1a103a0fae49d68ff0d83e6f3d37fbb
 };
 
 #endif

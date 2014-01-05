@@ -30,15 +30,12 @@ class kruskal: public mst
 public:
     kruskal(const graph *g): mst(g) {};
     virtual void do_work(size_t);
-<<<<<<< HEAD
     virtual ~kruskal(void)
     {
         for (auto ds: v)
            delete ds;
         v.clear();
     };
-=======
->>>>>>> 2feaa2afd1a103a0fae49d68ff0d83e6f3d37fbb
 };
 
 #endif
