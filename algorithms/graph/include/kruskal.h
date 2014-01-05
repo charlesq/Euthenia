@@ -23,18 +23,23 @@
 #include <include/disjointed_set.h>
 #include <vector>
 #include <stdint.h>
-using namespace std;
+//using namespace std;
 class kruskal: public mst
 {
-    vector<disjointed_set *> v;
+    std::vector<disjointed_set *> v;
 public:
     kruskal(const graph *g): mst(g) {};
     virtual void do_work(size_t);
-    virtual ~kruskal(void)
+    
+    void  reset(void)
     {
         for (auto ds: v)
            delete ds;
         v.clear();
+    };
+    ~kruskal()
+    {
+        reset();
     };
 };
 

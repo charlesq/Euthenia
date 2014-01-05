@@ -11,7 +11,7 @@ class print: public action
 {
     std::string str;
 public:
-    print(string s): str(s) {};
+    print(std::string s): str(s) {};
     virtual void act(size_t v)
     {
         std::cout << str << " vertex " << v << std::endl; 
@@ -50,7 +50,7 @@ int main(int argc, char *argv[])
     delete bfs;
     std::cout << "********************************************" << std::endl;
     mst *prima = new prim(&g);
-    std::cout <<" Applying Prim Algorithm to produce minimal spanning tree \n";
+    std::cout <<"Applying Prim Algorithm to produce minimal spanning tree \n";
     for (size_t i = 0; i < g.V(); ++i)
     {
        std::unordered_set<const edge *> mstree;
@@ -60,13 +60,15 @@ int main(int argc, char *argv[])
              print_mst(mstree);
        }
     }
+    std::cout << "\n Total weights of the spanning tree/forest is " << prima->W()<< std::endl;
     delete prima;
     std::cout << "\n********************************************" << std::endl;
-    std::cout <<" Applying Kruskal algorithm to produce minimal spanning tree \n";
+    std::cout <<"Applying Kruskal algorithm to produce minimal spanning tree \n";
     mst *kruskala = new kruskal(&g);
     auto mset = (*kruskala)();
     print_mst(mset);
     std::cout << std::endl;
+    std::cout << " Total weights of the spanning tree/forest is " << kruskala->W()<< std::endl; 
     delete kruskala;
     return 0;
 }

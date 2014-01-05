@@ -2,7 +2,7 @@
 #include <include/graph.h>
 
 
-using namespace std;
+//using namespace std;
 /* construct a graph from a text file 
 
   The file format  must follow the example below and the comments are for explanation only and 
@@ -17,9 +17,9 @@ using namespace std;
    4 1 5 
    
 */
-graph::graph(string fn, bool directed)
+graph::graph(std::string fn, bool directed)
 {
-   fstream is(fn); 
+   std::fstream is(fn); 
    if (!is.is_open())
    {
        v = 0;
