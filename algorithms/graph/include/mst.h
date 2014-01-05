@@ -27,7 +27,7 @@ public:
        return mstree;
    
    };
-   int W(void) const { return weights; };
+   inline int W(void) const { return weights; };
    virtual ~mst(void)
    {
        mstree.clear();
