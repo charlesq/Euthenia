@@ -25,10 +25,13 @@ public:
        return mstree;
    
    };
+<<<<<<< HEAD
    virtual ~mst(void)
    {
        mstree.clear();
    };
+=======
+>>>>>>> 2feaa2afd1a103a0fae49d68ff0d83e6f3d37fbb
 };
 
 

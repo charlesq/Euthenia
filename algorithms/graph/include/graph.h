@@ -41,7 +41,10 @@ public:
     {
        for (const auto eg: edges)
            delete eg; 
+<<<<<<< HEAD
        edges.clear();
+=======
+>>>>>>> 2feaa2afd1a103a0fae49d68ff0d83e6f3d37fbb
     };
 };
 
