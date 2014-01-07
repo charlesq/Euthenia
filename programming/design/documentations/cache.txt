@@ -5,9 +5,9 @@ Cacheing is an important means to enchance the performance of a computer, web si
 by reducing the average access time to data/instructions stored in  their primary
 /backstore locations.
 
-This exercise consists of four main classes, a abstract cache interface class, an actual
-cache implementation class, a replacement policy class and a backstore proxy class.
-note that backstore proxy can be modified to connect to remote backstore.
+This exercise consists of four main classes, an abstract cache interface class, 
+an actual cache implementation class, a replacement policy class and a backstore
+proxy class. note that backstore proxy can be modified to connect to remote backstore.
 
 The cache replament algorithm  employed in the project is to select the least
 recently visited to be evicted when all cache lines are used up. New algorithm
