@@ -1,5 +1,5 @@
-                                  $4 Sorting
-4.1. Algorithms summary 
+                                   Sorting
+1. Algorithms summary 
 Currently five soring algorithms have been implemented; among the five
  components, quick sort, merge sort and heap sort fall in the category of
  comparison based sorting while counting sort and radix sort are non comparison
@@ -25,8 +25,8 @@ Currently five soring algorithms have been implemented; among the five
 ---------------------------------------------------------------------
                  Table 4.1 Comparison of sorting algorithms
 
-4.2 Design aspects
-4.2.1 High-level static composition view 
+2 Design aspects
+2.1 High-level static composition view 
 |------|  module    
 | app  |  C APIs   |-------| Corresponding|------------|  
 |      |-----------| module|   C++ API    |sort_context| 
@@ -50,51 +50,51 @@ Currently five soring algorithms have been implemented; among the five
 |Heap|     |Quick|  | Merge|   |radix|    |counting| 
 |sort|     | sort|  | sort |   |sort |    | sort   | 
 |----|     |-----|  |------|   |-----|    |--------|
-4.2.2 Module APIs
-  4.2.2.1 list algorithms 
+2.2 Module APIs
+  2.2.1 list algorithms 
           const char *list_algorithms(void);
-  4.2.2.2 load an algorihthm module
+  2.2.2 load an algorihthm module
           typedef struct _module module;
           module *get_module (const char *algorithm_name);
           algorithm_name specifies the algorithm to be loaded; 
           currenly five names are legal: "quick sort","merge sort", "heap sort",
           "radix sort", and "counting sort", etc.
           in case an illegal name is inquired, NULL pointer will be returned.  
-  4.2.2.2.3 sort
+  2.2.2.3 sort
           typedef int (*compare)(const void *, const void *);  
           void *module::sort(void *base,size_t nelements, size_t elesize, compare cmp);  
           sort argumets are identical to those of stort() function in stdlib.
           for radix/counting sort, cmp is skipped;
-  4.2.2.2.4 set verbose logging
+  2.2.2.4 set verbose logging
           typedef void (*print_element)(const void *); 
           void module::set_verbose(bool b, print_element p);
-  4.2.2.2.5 get run time post sorting          
+  2.2.2.5 get run time post sorting          
           unsigned int module::get_runtime(void); /* returned number is in us */ 
-  4.2.2.2.6 unload a module
+  2.2.2.6 unload a module
           void module::destroy_module(void);
-  4.2.2.2.7 get algorithm description
+  2.2.2.7 get algorithm description
           const char *module::get_descriptiion(void);
-  4.2.2.2.8 module test
+  2.2.2.8 module test
           void module::test_module(size_t count);
           generate a random array of size count and conduct sorting operations.
           runt time will be printed out before return of the functiont.    
  
           note that Fisher Yates shuffle is employed for randomize an array.
-4.2.3 Class descriptions
- 4.2.3.1 class abstract_sort
+2.3 Class descriptions
+ 2.3.1 class abstract_sort
      refer to include/abstract.h in source code tree. 
- 4.2.3.2 class sort_context
+ 2.3.2 class sort_context
      refer to include/abstract.h in source code tree.
- 4.2.3.3 class quick_tree
+ 2.3.3 class quick_tree
      refer to include/quick_tree.hpp.
- 4.2.3.4 class merge_sort
+ 2.3.4 class merge_sort
      refer to include/merge_sort.hpp.
- 4.2.3.5 class radix_sort
+ 2.3.5 class radix_sort
      refer to include/radix_sort.hpp.
- 4.2.3.6 class counting_sort
+ 2.3.6 class counting_sort
      refer to include/counting_sort.hpp.
-4.3 destroy of concrete sorting objects
+3 destroy of concrete sorting objects
     objects in map[] in sort_base.cpp are deleted in map_destructor(), which
  is invoked when elf is unloaded.  
-4.4 Deployment
+4 Deployment
     an application, such as main.cpp, etc,  links sort library, i.e. libsort.so as a shared dynamic library.
