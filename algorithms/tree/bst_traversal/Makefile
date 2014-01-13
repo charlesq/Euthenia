@@ -1,8 +1,6 @@
 TARGET := test
-GLIBH := $(shell pkg-config --cflags glib-2.0)
-GLIB :=  $(shell pkg-config --libs glib-2.0)
-test: main.cpp
-	g++ -g  $(GLIBH)  $^   -std=c++11 -std=gnu++11 -I/usr/include/mysql  $(GLIB) -lgobject-2.0   -lmysqlclient -gdwarf-2 -pthread  -o $(TARGET)
+test: node.cpp recursive_traversal.cpp iterative_traversal.cpp main.cpp
+	g++ -g   $^   -std=c++11 -std=gnu++11 -I.   -gdwarf-2   -o $(TARGET)
 all: test
 
 
