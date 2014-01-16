@@ -605,3 +605,64 @@ int main()
     TEST_END
     return 0; 
 }
+#if 0
+/* alternative implementaion of strtoul
+ * which runs preprocessing to pass potential
+    space character, "0x" and '+'/'-'
+   before calculating return values
+*/
+
+ long strtoul(const char *s, const char **endptr, int base)
+    {
+       unsigned long v = 0;
+       bool sign = false;
+       /* skipping leading space characters */
+       while(*s != '\0' && *s == ' ')  ++s;
+       if (*s == '+' || *s == '-')
+           sign = *s == '-'? true: false;
+       *endptr = NULL;
+       /* determin base value if passed zero */
+       if (*s == '0')
+       {
+           if (*(s+1) == 'x' || *(s+1) == 'X')
+           {
+               if (base == 0)
+               {
+                   base = 16;
+               }
+               if (base == 16)
+                   s += 2;
+           }
+           else
+           {
+               if (base == 0)
+                   base = 8;
+           }
+
+       }
+       while (*s != '\0')
+       {
+           switch (*s)
+           {
+               int t;
+               if ('9' >= *s  && *s>= '0')
+               {
+                   t = *s - '0';
+               }
+               else
+               {
+                   t = tolower(*s) - 'a' + 10;
+               }
+               if (t < base) 
+               v *= base;
+                   v += t;
+                   ++s;
+                   continue;
+               }
+               *endptr = s;
+                  break;
+            }
+       }
+       return v;
+    }
+#endif
