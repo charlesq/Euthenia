@@ -170,7 +170,7 @@ public:
     }
 protected:
     Singleton4() = default;
-    ~Singleton4() = default;
+    virtual ~Singleton4() = default;
     Singleton4(const Singleton4 &) = delete;
     Singleton4 & operator = (const Singleton4 &) = delete;
 };
@@ -213,7 +213,7 @@ public:
 
 protected:
     Singleton5() = default;
-    ~Singleton5() = default;
+    virtual ~Singleton5() = default;
     Singleton5(const Singleton5 &) = delete;
     Singleton5& operator = (const Singleton5 &) = delete;
 };
